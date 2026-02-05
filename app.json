@@ -1,27 +1,59 @@
 {
   "expo": {
-    "name": "TradersiOS",
-    "slug": "TradersiOS",
-    "version": "1.0.0",
+    "name": "Traders AI",
+    "slug": "traders-ai-ios",
+    "experiments": {
+      "tsconfigPaths": true
+    },
+    "scheme": "tradersai",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/new-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tradersai.app",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "usesAppleSignIn": true,
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "fetch",
+          "remote-notification"
+        ],
+        "NSCameraUsageDescription": "Traders AI needs access to your camera to scan and analyze trading charts in real-time.",
+        "NSPhotoLibraryUsageDescription": "Traders AI needs access to your photos to let you upload and analyze saved chart screenshots."
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/transparent.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tradersai.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      "expo-notifications",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
+      "expo-font"
+    ]
   }
 }

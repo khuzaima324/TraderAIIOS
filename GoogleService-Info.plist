@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1036296914296-upd6tj8287ue3scef2v9hp7enkptqlva.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1036296914296-upd6tj8287ue3scef2v9hp7enkptqlva</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1036296914296-53o856aqla4im9q0pd6g8rntt6ema29m.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC8iJAHY6MkFlKaUN1v02xDrNjMkmU0Dq8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1036296914296</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.tradersai.app</string>
+	<key>PROJECT_ID</key>
+	<string>traders-ai-b0ac3</string>
+	<key>STORAGE_BUCKET</key>
+	<string>traders-ai-b0ac3.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1036296914296:ios:f21aed222d0151b049348d</string>
+</dict>
+</plist>
