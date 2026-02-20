@@ -16,6 +16,7 @@ export interface UserData {
   usage: {
     scansToday: number;
     analysesToday: number;
+    lastScanDate?: number;
     trackersCount: number;
     totalLifetimeScans: number;
     totalLifetimeAnalyses: number;

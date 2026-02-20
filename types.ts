@@ -131,6 +131,7 @@ export interface UserUsageStats {
   analysesToday: number;
   trackersCount: number;
   lastResetDate?: string; // 👈 CHANGED: Made Optional (?) to prevent errors
+  lastScanDate?: number;
   totalLifetimeScans: number;
   totalLifetimeAnalyses: number;
   totalLifetimeTrackers: number;

@@ -2,9 +2,9 @@
   "expo": {
     "name": "Traders AI",
     "slug": "traders-ai-mobile",
-    "version": "1.0.1",
+    "version": "1.0.4",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/new-icon.png",
     "scheme": "tradersai",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
@@ -19,9 +19,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tradersai.app",
+      "icon": "./assets/images/new-icon.png",
       "googleServicesFile": "./GoogleService-Info.plist",
       "usesAppleSignIn": true,
-      "buildNumber": "1",
+      "buildNumber": "17",
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",
@@ -36,10 +37,11 @@
         "foregroundImage": "./assets/images/transparent.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.tradersai.app"
+      "package": "com.tradersai.app",
+        "googleServicesFile": "./google-service.json"
     },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/transparent.png"
     },
     "plugins": [
       "expo-router",

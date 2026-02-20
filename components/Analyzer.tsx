@@ -182,7 +182,7 @@ export const Analyzer: React.FC<AnalyzerProps> = ({
 
     try {
       await addToHistory(user.uid, {
-        id: Math.random().toString(36).substr(2, 9),
+        // id: Math.random().toString(36).substr(2, 9),
         timestamp: Date.now(),
         type: "SCREENSHOT",
         setup: result,

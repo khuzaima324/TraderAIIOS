@@ -139,6 +139,8 @@ export const Profile: React.FC<ProfileProps> = ({
   };
 
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteInput, setDeleteInput] = useState("");
   const [cancelInput, setCancelInput] = useState("");
 
   // Forms
@@ -279,6 +281,39 @@ export const Profile: React.FC<ProfileProps> = ({
       );
     } catch (e: any) {
       Alert.alert("Error", "Failed to open settings: " + e.message);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteInput.trim().toLowerCase() !== "delete") {
+      Alert.alert("Error", "Please type 'delete' correctly to confirm.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const user = auth().currentUser;
+      if (user) {
+        // Here you would also add logic to delete user data from Firestore if you have any
+        await user.delete(); 
+        
+        setShowDeleteModal(false);
+        setDeleteInput("");
+        playSuccessSound();
+        Alert.alert(
+          "Account Deleted", 
+          "Your account and data have been scheduled for deletion within 14 days. If you wish to cancel this, please log back in within 14 days."
+        );
+        onLogout(); // Log the user out immediately
+      }
+    } catch (e: any) {
+      if (e.code === 'auth/requires-recent-login') {
+        Alert.alert("Error", "For security reasons, please log out and log back in before deleting your account.");
+      } else {
+        Alert.alert("Error", "Failed to delete account: " + e.message);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -749,6 +784,28 @@ export const Profile: React.FC<ProfileProps> = ({
           </TouchableOpacity>
         </GlassBox>
 
+        {/* ADVANCED / DANGER ZONE */}
+        <Text style={[styles.sectionHeader, { color: "#FF3B30", opacity: 0.8 }]}>
+          {t.advanced || "Advanced"}
+        </Text>
+        <GlassBox style={[styles.cardContainer, { borderColor: "rgba(255,59,48,0.2)" }]}>
+          <TouchableOpacity
+            onPress={() => setShowDeleteModal(true)}
+            style={[styles.settingRow, { borderBottomWidth: 0 }]}
+          >
+            <View style={styles.accordionLeft}>
+              <View style={[styles.iconBox, { backgroundColor: "rgba(255,59,48,0.15)" }]}>
+                <Ionicons name="trash" size={18} color="#FF3B30" />
+              </View>
+              <View>
+                <Text style={styles.optionTitle}>Delete Account</Text>
+                <Text style={styles.optionSub}>Permanently remove data</Text>
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color="rgba(255,255,255,0.3)" />
+          </TouchableOpacity>
+        </GlassBox>
+
         {/* LOGOUT */}
         <View style={styles.logoutContainer}>
           <TouchableOpacity
@@ -835,45 +892,52 @@ export const Profile: React.FC<ProfileProps> = ({
             </GlassBox>
 
             {/* PLUS PLAN CARD */}
+          {/* PLUS PLAN CARD */}
+            {/* PLUS PLAN CARD */}
             <GlassBox
               style={[
                 styles.premiumPlanCard,
                 {
                   borderColor: "rgba(48,209,88,0.3)",
                   backgroundColor: "rgba(48,209,88,0.05)",
+                  position: "relative", // Needed for floating badge
                 },
               ]}
             >
+              {/* Header */}
               <View style={styles.rowJustify}>
-                <Text style={[styles.premiumPlanName, { color: "#30D158" }]}>
-                  Plus
-                </Text>
-                <Badge color="green">POPULAR</Badge>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <Text style={[styles.premiumPlanName, { color: "#30D158" }]}>
+                    Plus
+                  </Text>
+                  <Badge color="green">POPULAR</Badge>
+                </View>
               </View>
 
-              <View
-                style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}
-              >
+              {/* Price & Billing */}
+              <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginTop: 4 }}>
                 <Text style={styles.premiumPlanPrice}>
                   {billingCycle === "MONTHLY"
                     ? packages.plusMonthly?.product.priceString || "..."
                     : packages.plusYearly?.product.priceString || "..."}
                 </Text>
+                <Text style={{ color: "rgba(255,255,255,0.5)", fontSize: 18, fontWeight: "600" }}>
+                  / {billingCycle === "MONTHLY" ? "Month" : "Year"}
+                </Text>
               </View>
 
+              <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 12 }}>
+                {billingCycle === "MONTHLY" 
+                  ? "Billed monthly, cancel anytime" 
+                  : "Billed yearly, cancel anytime"}
+              </Text>
+
               <View style={styles.premiumDivider} />
-              <Text style={styles.premiumFeature}>
-                • {t.feat_7_tracker || "5 Trackers"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_live_monitor || "Live Monitoring"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_pro_analysis || "Pro Analysis"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_14_manual || "Manual Scan"}
-              </Text>
+              
+              <Text style={styles.premiumFeature}>• {t.feat_7_tracker || "5 Trackers"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_live_monitor || "Live Monitoring"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_pro_analysis || "Pro Analysis"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_14_manual || "Manual Scan"}</Text>
 
               <GlassButton
                 variant="success"
@@ -886,8 +950,16 @@ export const Profile: React.FC<ProfileProps> = ({
                   ? t.current_plan || "Current Plan"
                   : t.upgrade_plus || "Upgrade to Plus"}
               </GlassButton>
+
+              {/* FLOATING SAVINGS BADGE (Yearly Only) */}
+              {billingCycle === "YEARLY" && (
+                <View style={styles.floatingBadge}>
+                  <Text style={styles.floatingBadgeText}>SAVE 16%</Text>
+                </View>
+              )}
             </GlassBox>
 
+            {/* PRO PLAN CARD */}
             {/* PRO PLAN CARD */}
             <GlassBox
               style={[
@@ -895,39 +967,44 @@ export const Profile: React.FC<ProfileProps> = ({
                 {
                   borderColor: "rgba(10,132,255,0.3)",
                   backgroundColor: "rgba(10,132,255,0.05)",
+                  position: "relative", // Needed for floating badge
                 },
               ]}
             >
-              <Text style={[styles.premiumPlanName, { color: "#0A84FF" }]}>
-                Pro
-              </Text>
+              {/* Header */}
+              <View style={styles.rowJustify}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                  <Text style={[styles.premiumPlanName, { color: "#0A84FF" }]}>
+                    Pro
+                  </Text>
+                </View>
+              </View>
 
-              <View
-                style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}
-              >
+              {/* Price & Billing */}
+              <View style={{ flexDirection: "row", alignItems: "baseline", gap: 4, marginTop: 4 }}>
                 <Text style={styles.premiumPlanPrice}>
                   {billingCycle === "MONTHLY"
                     ? packages.proMonthly?.product.priceString || "..."
                     : packages.proYearly?.product.priceString || "..."}
                 </Text>
+                <Text style={{ color: "rgba(255,255,255,0.5)", fontSize: 18, fontWeight: "600" }}>
+                  / {billingCycle === "MONTHLY" ? "Month" : "Year"}
+                </Text>
               </View>
 
+              <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, marginBottom: 12 }}>
+                {billingCycle === "MONTHLY" 
+                  ? "Billed monthly, cancel anytime" 
+                  : "Billed yearly, cancel anytime"}
+              </Text>
+
               <View style={styles.premiumDivider} />
-              <Text style={styles.premiumFeature}>
-                • {t.feat_15_tracker || "12 Trackers"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_bg_monitor || "Background Monitor"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_deep_market || "Deep Market Data"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_unlimited_manual || "15 manual scans"}
-              </Text>
-              <Text style={styles.premiumFeature}>
-                • {t.feat_15_analysis || "Analyses Daily"}
-              </Text>
+              
+              <Text style={styles.premiumFeature}>• {t.feat_15_tracker || "12 Trackers"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_bg_monitor || "Background Monitor"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_deep_market || "Deep Market Data"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_unlimited_manual || "15 manual scans"}</Text>
+              <Text style={styles.premiumFeature}>• {t.feat_15_analysis || "Analyses Daily"}</Text>
 
               <GlassButton
                 variant="primary"
@@ -940,6 +1017,13 @@ export const Profile: React.FC<ProfileProps> = ({
                   ? t.current_plan || "Current Plan"
                   : t.get_pro || "Get Pro"}
               </GlassButton>
+
+              {/* FLOATING SAVINGS BADGE (Yearly Only) */}
+              {billingCycle === "YEARLY" && (
+                <View style={styles.floatingBadge}>
+                  <Text style={styles.floatingBadgeText}>SAVE 16%</Text>
+                </View>
+              )}
             </GlassBox>
 
             <TouchableOpacity
@@ -952,6 +1036,21 @@ export const Profile: React.FC<ProfileProps> = ({
                   : t.restore || "Restore Purchases"}
               </Text>
             </TouchableOpacity>
+
+            {/* NEW: Legal Links for Apple Review (Guideline 3.1.2) */}
+            <View style={styles.legalLinksContainer}>
+              <TouchableOpacity 
+                onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}
+              >
+                <Text style={styles.legalLink}>Terms of Use</Text>
+              </TouchableOpacity>
+              <Text style={styles.legalDivider}> • </Text>
+              <TouchableOpacity 
+                onPress={() => Linking.openURL('https://www.revenuecat.com/privacy/')} 
+              >
+                <Text style={styles.legalLink}>Privacy Policy</Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
         </View>
       </Modal>
@@ -1242,6 +1341,47 @@ export const Profile: React.FC<ProfileProps> = ({
             >
               {t.cancel || "Cancel"}
             </GlassButton>
+          </GlassBox>
+        </View>
+      </Modal>
+      {/* DELETE ACCOUNT MODAL */}
+      <Modal visible={showDeleteModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFill} />
+          <GlassBox style={styles.modalCard}>
+            <Text style={[styles.modalTitle, { color: "#FF3B30" }]}>
+              Delete Account?
+            </Text>
+            <Text style={{ color: "rgba(255,255,255,0.7)", textAlign: "center", marginBottom: 20, lineHeight: 20 }}>
+              Are you sure you want to delete your account and data?{"\n\n"}
+              Type <Text style={{ fontWeight: "bold", color: "white" }}>delete</Text> below to confirm.
+            </Text>
+            <Text style={styles.label}>TYPE CONFIRMATION</Text>
+            <GlassInput
+              value={deleteInput}
+              onChangeText={setDeleteInput}
+              placeholder="delete"
+              autoCapitalize="none"
+            />
+            <View style={styles.modalButtons}>
+              <GlassButton
+                variant="ghost"
+                onPress={() => {
+                  setShowDeleteModal(false);
+                  setDeleteInput("");
+                }}
+                style={{ flex: 1 }}
+              >
+                Cancel
+              </GlassButton>
+              <GlassButton
+                onPress={handleDeleteAccount}
+                isLoading={isLoading}
+                style={{ flex: 1, backgroundColor: "#FF3B30" }}
+              >
+                Delete
+              </GlassButton>
+            </View>
           </GlassBox>
         </View>
       </Modal>
@@ -1599,5 +1739,52 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  // Add inside StyleSheet.create({ ... })
+  savingsBadge: {
+    backgroundColor: "rgba(74, 222, 128, 0.15)",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "rgba(74, 222, 128, 0.3)",
+  },
+  floatingBadge: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    backgroundColor: "#4ade806f", // Solid green so it pops
+    paddingHorizontal: 10,
+    borderWidth: 2,
+    borderColor: "#000",
+    paddingVertical: 6,
+    borderRadius: 20, // High radius makes it fully rounded
+    zIndex: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  floatingBadgeText: {
+    color: "#000", // Black text on green background
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+  legalLinksContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 40, // Extra space at bottom of modal
+  },
+  legalLink: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 11,
+    textDecorationLine: "underline",
+  },
+  legalDivider: {
+    color: "rgba(255,255,255,0.2)",
+    fontSize: 11,
+    marginHorizontal: 8,
   },
 });

@@ -56,6 +56,20 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
   );
   const [isReady, setIsReady] = useState(false);
 
+  const isValidValue = (val: string | null | undefined) => {
+    if (!val) return false;
+    const invalidStrings = [
+      "N/A",
+      "n/a",
+      "null",
+      "Market",
+      "Dynamic",
+      "0",
+      "See Chart",
+    ];
+    return !invalidStrings.includes(val.trim());
+  };
+
   useFocusEffect(
     useCallback(() => {
       const task = InteractionManager.runAfterInteractions(() => {
@@ -69,7 +83,20 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
     }, []),
   );
 
+  // const getTimeAgo = (timestamp: number) => {
+  //   const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  //   if (seconds < 60) return "Just now";
+  //   const minutes = Math.floor(seconds / 60);
+  //   if (minutes < 60) return `${minutes}m ago`;
+  //   const hours = Math.floor(minutes / 60);
+  //   if (hours < 24) return `${hours}h ago`;
+  //   return `${Math.floor(hours / 24)}d ago`;
+  // };
+
   const getTimeAgo = (timestamp: number) => {
+    // Fix: Check if timestamp is valid before doing math
+    if (!timestamp || isNaN(timestamp)) return "Recently";
+
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
     if (seconds < 60) return "Just now";
     const minutes = Math.floor(seconds / 60);
@@ -276,6 +303,83 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
 
                 <View style={styles.gridContainer}>
                   <View style={styles.gridRow}>
+                    {/* Entry Price */}
+                    {isValidValue(selectedSignal.setup.entryPrice) && (
+                      <View style={styles.dataBox}>
+                        <Text style={styles.dataLabel}>
+                          {t.entry || "Entry"}
+                        </Text>
+                        <Text style={styles.dataValue}>
+                          {selectedSignal.setup.entryPrice}
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* Stop Loss */}
+                    {isValidValue(selectedSignal.setup.stopLoss) && (
+                      <View style={[styles.dataBox, styles.borderRed]}>
+                        <Text
+                          style={[styles.dataLabel, { color: COLORS.neonRed }]}
+                        >
+                          {t.stop_loss || "Stop Loss"}
+                        </Text>
+                        <Text
+                          style={[styles.dataValue, { color: COLORS.neonRed }]}
+                        >
+                          {selectedSignal.setup.stopLoss}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={styles.gridRow}>
+                    {/* Target 1 */}
+                    {isValidValue(selectedSignal.setup.takeProfit) && (
+                      <View style={[styles.dataBox, styles.bgGreen]}>
+                        <Text
+                          style={[
+                            styles.dataLabel,
+                            { color: COLORS.neonGreen },
+                          ]}
+                        >
+                          {t.target_1 || "Target 1"}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.dataValue,
+                            { color: COLORS.neonGreen },
+                          ]}
+                        >
+                          {selectedSignal.setup.takeProfit}
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* Target 2 */}
+                    {isValidValue(selectedSignal.setup.takeProfit2) && (
+                      <View style={[styles.dataBox, styles.bgGreen]}>
+                        <Text
+                          style={[
+                            styles.dataLabel,
+                            { color: COLORS.neonGreen },
+                          ]}
+                        >
+                          {t.extended_targets || "Extended"}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.dataValue,
+                            { color: COLORS.neonGreen },
+                          ]}
+                        >
+                          {selectedSignal.setup.takeProfit2}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+                {/* <View style={styles.gridContainer}>
+                  <View style={styles.gridRow}>
                     <View style={styles.dataBox}>
                       <Text style={styles.dataLabel}>{t.entry || "Entry"}</Text>
                       <Text style={styles.dataValue}>
@@ -330,7 +434,7 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
                       </View>
                     )}
                   </View>
-                </View>
+                </View> */}
               </ScrollView>
 
               <View style={styles.modalFooter}>
