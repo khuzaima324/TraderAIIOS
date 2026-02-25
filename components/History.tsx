@@ -40,9 +40,14 @@ export const History: React.FC<HistoryProps> = ({
     return [...filtered].sort((a, b) => b.timestamp - a.timestamp);
   }, [items, filter]);
 
-  const formatDate = (ts: number) => {
+  const formatDate = (ts?: number | string | null) => {
+    if (!ts) return "Unknown Date";
+
+    const timeNum = Number(ts);
+    if (isNaN(timeNum) || timeNum === 0) return "Unknown Date";
+
     const locale = language === "en" ? "en-US" : language;
-    return new Date(ts).toLocaleString(locale, {
+    return new Date(timeNum).toLocaleString(locale, {
       month: "short",
       day: "numeric",
       hour: "2-digit",

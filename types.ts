@@ -92,7 +92,7 @@ export interface PendingSignal {
   setup: TradeSetup;
   tweet: string;
   handle: string;
-  tweetTimestamp: number;
+  timestamp: number;
   livePriceData: { price: number; change24h?: number };
   tweetUrl?: string;
   authorAvatar?: string;

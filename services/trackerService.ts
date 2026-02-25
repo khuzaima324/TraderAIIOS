@@ -76,7 +76,7 @@ export const performScan = async (userId: string, account: TrackedAccount) => {
       detectedAt: Date.now(),
       tweet: result.tweet.text,
       handle: account.handle,
-      tweetTimestamp: new Date(result.tweet.timestamp).getTime(),
+      timestamp: result.tweet.timestamp ? new Date(result.tweet.timestamp).getTime() : Date.now(),
       livePriceData: { price: 0, change24h: 0 },
       tweetUrl: `https://twitter.com/${account.handle}/status/${result.tweet.id}`,
       authorAvatar: account.avatarUrl || "",

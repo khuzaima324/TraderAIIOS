@@ -93,16 +93,48 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
   //   return `${Math.floor(hours / 24)}d ago`;
   // };
 
-  const getTimeAgo = (timestamp: number) => {
-    // Fix: Check if timestamp is valid before doing math
-    if (!timestamp || isNaN(timestamp)) return "Recently";
+  // const getTimeAgo = (timestamp: number) => {
+  //   // Fix: Check if timestamp is valid before doing math
+  //   if (!timestamp || isNaN(timestamp)) return "Recently";
 
-    const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return "Just now";
+  //   const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  //   if (seconds < 60) return "Just now";
+  //   const minutes = Math.floor(seconds / 60);
+  //   if (minutes < 60) return `${minutes}m ago`;
+  //   const hours = Math.floor(minutes / 60);
+  //   if (hours < 24) return `${hours}h ago`;
+  //   return `${Math.floor(hours / 24)}d ago`;
+  // };
+
+const getTimeAgo = (timestamp?: number | string | null) => {
+    // 1. Bulletproof check for missing manual scan data
+    if (!timestamp) return "Just now";
+
+    // 2. Force it to be a number (fixes manual scans that save time as a string)
+    const timeNum = Number(timestamp);
+    if (isNaN(timeNum) || timeNum === 0) return "Just now";
+
+    // 3. Calculate difference in seconds using the device's exact current time
+    const seconds = Math.floor((Date.now() - timeNum) / 1000);
+
+    // 4. Fix for device clocks being slightly out of sync with the server
+    if (seconds < 0) return "Just now";
+
+    // 5. The exact formatting you asked for
+    if (seconds < 60) {
+      return `${seconds}s ago`; // Shows "15s ago" instead of "Recently"
+    }
+    
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m ago`;
+    if (minutes < 60) {
+      return `${minutes}m ago`;
+    }
+    
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h ago`;
+    if (hours < 24) {
+      return `${hours}h ago`;
+    }
+    
     return `${Math.floor(hours / 24)}d ago`;
   };
 
@@ -166,7 +198,7 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
           ) : (
             signals
               .slice()
-              .sort((a, b) => b.tweetTimestamp - a.tweetTimestamp)
+              .sort((a, b) => b.timestamp - a.timestamp)
               .map((signal) => (
                 <TouchableOpacity
                   key={signal.id}
@@ -196,7 +228,7 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
                       <View>
                         <Text style={styles.handleText}>{signal.handle}</Text>
                         <Text style={styles.timeText}>
-                          {getTimeAgo(signal.tweetTimestamp)}
+                          {getTimeAgo(signal.timestamp)}
                         </Text>
                       </View>
 
@@ -280,7 +312,7 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
                     </Text>
                     <View style={styles.metaDot} />
                     <Text style={[styles.metaText, { color: COLORS.neonBlue }]}>
-                      {getTimeAgo(selectedSignal.tweetTimestamp)}
+                      {getTimeAgo(selectedSignal.timestamp)}
                     </Text>
                   </View>
                 </View>
