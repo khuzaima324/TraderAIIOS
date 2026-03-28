@@ -308,13 +308,13 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     bottom: 0,
-    width: 2.5,
+    // width: 2.5,
     zIndex: 10,
   },
   cardInner: {
     paddingVertical: 14,
     paddingHorizontal: 14,
-    paddingLeft: 18,
+    // paddingLeft: 18,
   },
   headerRow: {
     flexDirection: "row",

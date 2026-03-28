@@ -69,6 +69,9 @@ const COLORS = {
   modalBg: "rgba(28, 28, 30, 0.85)",
 };
 
+const APP_STORE_ID = "6756635625";
+const PLAY_STORE_PACKAGE = "com.tradersai.app";
+
 interface ProfileProps {
   currentTier: SubscriptionTier;
   onUpgrade: (newTier: SubscriptionTier) => void;
@@ -367,9 +370,30 @@ export const Profile: React.FC<ProfileProps> = ({
     }
   };
 
+  // const handleRateUs = () => {
+  //   Alert.alert("Rate Us", "Thank you for rating us 5 stars! ⭐️⭐️⭐️⭐️⭐️");
+  // };
+
   const handleRateUs = () => {
-    Alert.alert("Rate Us", "Thank you for rating us 5 stars! ⭐️⭐️⭐️⭐️⭐️");
+    playHapticClick();
+
+    if (Platform.OS === "ios") {
+      Linking.openURL(
+        `https://apps.apple.com/app/id${APP_STORE_ID}?action=write-review`,
+      ).catch(() => {
+        // Fallback if deep link fails
+        Linking.openURL(`https://apps.apple.com/app/id${APP_STORE_ID}`);
+      });
+    } else {
+      Linking.openURL(`market://details?id=${PLAY_STORE_PACKAGE}`).catch(() => {
+        // Fallback to browser if Play Store app is not available
+        Linking.openURL(
+          `https://play.google.com/store/apps/details?id=${PLAY_STORE_PACKAGE}`,
+        );
+      });
+    }
   };
+
 
   const renderEyeIcon = (isVisible: boolean, onToggle: () => void) => (
     <TouchableOpacity
@@ -1237,7 +1261,7 @@ export const Profile: React.FC<ProfileProps> = ({
       </Modal>
 
       {/* TERMS */}
-      <Modal visible={activeModal === "TERMS"} transparent animationType="fade">
+      {/* <Modal visible={activeModal === "TERMS"} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <BlurView
             intensity={30}
@@ -1277,6 +1301,153 @@ export const Profile: React.FC<ProfileProps> = ({
                   <Text style={styles.bold}>5. Privacy{"\n"}</Text>
                   We value your privacy. Your data is stored securely and never
                   shared with third parties without consent.
+                </Text>
+              </ScrollView>
+            </View>
+            <View style={styles.termsFooter}>
+              <TouchableOpacity
+                onPress={closeModal}
+                style={styles.fullWidthButton}
+              >
+                <Text style={styles.buttonText}>{t.close || "Close"}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal> */}
+
+
+
+        {/* TERMS */}
+      <Modal visible={activeModal === "TERMS"} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <BlurView
+            intensity={30}
+            tint="dark"
+            style={StyleSheet.absoluteFill}
+          />
+          <View style={styles.termsCard}>
+            <View style={styles.termsHeader}>
+              <Text style={styles.modalTitle}>{t.terms_cond || "Terms of Service"}</Text>
+              <TouchableOpacity
+                onPress={closeModal}
+                style={styles.closeBtnSmall}
+              >
+                <Ionicons name="close" size={22} color="#fff" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.termsBodyContainer}>
+              <ScrollView
+                showsVerticalScrollIndicator={true}
+                contentContainerStyle={styles.termsScrollContent}
+              >
+                <Text style={styles.termsText}>
+                  <Text style={styles.bold}>TERMS OF SERVICE{"\n"}</Text>
+                  Traders AI – Smarter Trades, Less Guessing{"\n"}
+                  Effective Date: 01/03/2026{"\n\n"}
+                  These Terms of Service ("Terms") govern your use of the Traders AI mobile application ("App"), operated by Mooth Global ("Company," "we," "us," or "our").{"\n\n"}
+                  By downloading, installing, or using Traders AI, you agree to be bound by these Terms. If you do not agree, do not use the App.{"\n\n"}
+                  These Terms are designed to comply with both Apple App Store and Google Play Store policies.{"\n\n"}
+
+                  <Text style={styles.bold}>1. License Grant{"\n"}</Text>
+                  Subject to your compliance with these Terms, we grant you a limited, non-exclusive, non-transferable, revocable license to use the App on any device that you own or control, as permitted by the applicable platform terms (Apple Media Services Terms and Conditions or Google Play Terms of Service).{"\n\n"}
+                  You may not:{"\n"}
+                  • Copy, modify, distribute, or create derivative works of the App{"\n"}
+                  • Reverse engineer, decompile, or attempt to extract source code{"\n"}
+                  • Resell, sublicense, rent, or commercially exploit the App{"\n\n"}
+                  This license is for personal, non-commercial use unless otherwise agreed in writing.{"\n\n"}
+
+                  <Text style={styles.bold}>2. Subscription & Payments{"\n"}</Text>
+                  Traders AI may offer free features and paid Pro features.{"\n\n"}
+                  Payments may be processed via:{"\n"}
+                  • Apple In-App Purchases{"\n"}
+                  • Google Play Billing{"\n"}
+                  • RevenueCat (third-party subscription management service){"\n\n"}
+                  We use RevenueCat as a third-party service provider to manage subscription status, entitlements, and purchase validation.{"\n\n"}
+                  All billing, renewals, cancellations, and refunds are governed by:{"\n"}
+                  • Apple Media Services Terms (for iOS users){"\n"}
+                  • Google Play Billing Terms (for Android users){"\n\n"}
+                  Subscriptions automatically renew unless canceled at least 24 hours before the end of the billing period.{"\n\n"}
+                  We do not store your payment details directly.{"\n\n"}
+
+                  <Text style={styles.bold}>3. No Financial Advice Disclaimer{"\n"}</Text>
+                  Traders AI provides AI-powered market analysis, chart breakdowns, trade setups, and social media tracking insights for informational and educational purposes only.{"\n\n"}
+                  We do not provide:{"\n"}
+                  • Financial advice{"\n"}
+                  • Investment advice{"\n"}
+                  • Trading guarantees{"\n"}
+                  • Portfolio management services{"\n\n"}
+                  Trading cryptocurrencies, stocks, and forex involves substantial risk and may result in loss of capital.{"\n\n"}
+                  You are solely responsible for your trading decisions. Past performance does not guarantee future results.{"\n\n"}
+
+                  <Text style={styles.bold}>4. AI Chart Analysis & Social Tracking{"\n"}</Text>
+                  The App may:{"\n"}
+                  • Analyze user-submitted chart screenshots{"\n"}
+                  • Generate AI-based trade ideas (entry, stop-loss, take-profit levels){"\n"}
+                  • Monitor public social media posts from public figures (including politicians, influencers, and traders){"\n"}
+                  • Provide sentiment-based market signals{"\n\n"}
+                  These insights are automated and algorithmic. They may be inaccurate, delayed, incomplete, or incorrect. We do not guarantee signal accuracy, timing, or profitability.{"\n\n"}
+
+                  <Text style={styles.bold}>5. Data Collection & Privacy{"\n"}</Text>
+                  We collect only the data necessary to operate the App:{"\n\n"}
+                  • Personal Information: Email address, User ID{"\n"}
+                  • Financial Information: Purchase history (via Apple, Google Play, RevenueCat){"\n"}
+                  • Device Information: Device identifiers for analytics and functionality{"\n"}
+                  • Camera Access: The App may request camera permission for chart scanning or profile features. We do not store or share your photos or videos without explicit consent.{"\n\n"}
+                  We do not sell your personal data to third parties. For full details, refer to our Privacy Policy.{"\n\n"}
+
+                  <Text style={styles.bold}>6. Account Deletion{"\n"}</Text>
+                  You may request deletion of your account and associated data by contacting: moothglobal@gmail.com{"\n\n"}
+                  We will process verified deletion requests within 30 days, subject to legal or regulatory obligations.{"\n\n"}
+
+                  <Text style={styles.bold}>7. User Conduct{"\n"}</Text>
+                  You agree not to:{"\n"}
+                  • Use the App for unlawful purposes{"\n"}
+                  • Attempt to manipulate signals or exploit vulnerabilities{"\n"}
+                  • Upload malicious content{"\n"}
+                  • Interfere with platform functionality{"\n\n"}
+                  Violation may result in suspension or termination.{"\n\n"}
+
+                  <Text style={styles.bold}>8. Termination{"\n"}</Text>
+                  We may suspend or terminate your access if:{"\n"}
+                  • You violate these Terms{"\n"}
+                  • Required by law{"\n"}
+                  • Necessary to protect platform integrity{"\n\n"}
+                  Upon termination, your license to use the App ends immediately.{"\n\n"}
+
+                  <Text style={styles.bold}>9. Intellectual Property{"\n"}</Text>
+                  All content within Traders AI, including: Branding, Algorithms, Design, Interface, Software code, and AI models is owned by Mooth Global or licensed appropriately.{"\n\n"}
+                  You may not copy or reproduce any portion without permission.{"\n\n"}
+
+                  <Text style={styles.bold}>10. Warranty Disclaimer{"\n"}</Text>
+                  The App is provided "AS IS" and "AS AVAILABLE."{"\n\n"}
+                  To the maximum extent permitted by law, we disclaim all warranties, including: Merchantability, Fitness for a particular purpose, Accuracy of signals, and Continuous availability.{"\n\n"}
+                  We do not guarantee uninterrupted or error-free operation.{"\n\n"}
+
+                  <Text style={styles.bold}>11. Limitation of Liability{"\n"}</Text>
+                  To the maximum extent permitted by law:{"\n"}
+                  Mooth Global shall not be liable for: Trading losses, Financial damages, Loss of profits, Indirect or consequential damages, or Data loss.{"\n\n"}
+                  Our total liability shall not exceed the amount you paid for the App in the last 12 months. Some jurisdictions do not allow certain limitations, so some may not apply to you.{"\n\n"}
+
+                  <Text style={styles.bold}>12. Platform-Specific Terms{"\n"}</Text>
+                  If downloaded via Apple:{"\n"}
+                  • Apple is not responsible for the App or its content.{"\n"}
+                  • Apple has no obligation to provide maintenance or support.{"\n"}
+                  • Apple is not responsible for addressing claims related to the App.{"\n"}
+                  • Apple and its subsidiaries are third-party beneficiaries of these Terms.{"\n\n"}
+                  If downloaded via Google Play:{"\n"}
+                  • Google is not responsible for the App or its content.{"\n"}
+                  • Refunds and billing disputes are governed by Google Play policies.{"\n\n"}
+
+                  <Text style={styles.bold}>13. Changes to Terms{"\n"}</Text>
+                  We may update these Terms at any time. Continued use of the App after updates constitutes acceptance of revised Terms.{"\n\n"}
+
+                  <Text style={styles.bold}>14. Governing Law{"\n"}</Text>
+                  These Terms shall be governed by the laws of the applicable jurisdiction in which Mooth Global operates, without regard to conflict of law principles.{"\n\n"}
+
+                  <Text style={styles.bold}>15. Contact Information{"\n"}</Text>
+                  Mooth Global{"\n"}
+                  Email: moothglobal@gmail.com
                 </Text>
               </ScrollView>
             </View>

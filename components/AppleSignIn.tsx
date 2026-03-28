@@ -1,3 +1,83 @@
+// // import * as AppleAuthentication from "expo-apple-authentication";
+// // import * as Crypto from "expo-crypto";
+// // import { useRouter } from "expo-router";
+// // import React from "react";
+// // import { Alert, Platform, StyleSheet, View } from "react-native";
+// // import { initializeUser } from "../services/database";
+// // import { auth } from "../services/firebase";
+
+// // export default function AppleSignIn() {
+// //   const router = useRouter();
+
+// //   if (Platform.OS !== "ios") return null;
+
+// //   const handleAppleLogin = async () => {
+// //     try {
+// //       const nonce =
+// //         Math.random().toString(36).substring(2, 15) +
+// //         Math.random().toString(36).substring(2, 15);
+// //       const hashedNonce = await Crypto.digestStringAsync(
+// //         Crypto.CryptoDigestAlgorithm.SHA256,
+// //         nonce,
+// //       );
+
+// //       const appleResult = await AppleAuthentication.signInAsync({
+// //         requestedScopes: [
+// //           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+// //           AppleAuthentication.AppleAuthenticationScope.EMAIL,
+// //         ],
+// //         nonce: hashedNonce,
+// //       });
+
+// //       const { identityToken } = appleResult;
+// //       if (!identityToken) throw new Error("No identity token provided.");
+
+// //       const appleCredential = auth.AppleAuthProvider.credential(
+// //         identityToken,
+// //         nonce,
+// //       );
+
+// //       const userCredential = await auth().signInWithCredential(appleCredential);
+// //       const user = userCredential.user;
+
+// //       if (user) {
+// //         await initializeUser(user.uid, user.email || "");
+// //         console.log("Apple User Initialized in Database");
+// //       }
+// //     } catch (e: any) {
+// //       if (e.code === "ERR_REQUEST_CANCELED") {
+// //       } else {
+// //         console.error("Apple Sign-In Error:", e);
+// //         Alert.alert("Login Failed", e.message);
+// //       }
+// //     }
+// //   };
+
+// //   return (
+// //     <View style={styles.container}>
+// //       <AppleAuthentication.AppleAuthenticationButton
+// //         buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+// //         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+// //         cornerRadius={30}
+// //         style={styles.button}
+// //         onPress={handleAppleLogin}
+// //       />
+// //     </View>
+// //   );
+// // }
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     marginBottom: 12,
+// //     width: "100%",
+// //     alignItems: "center",
+// //   },
+// //   button: {
+// //     width: "100%",
+// //     height: 52,
+// //   },
+// // });
+
 // import * as AppleAuthentication from "expo-apple-authentication";
 // import * as Crypto from "expo-crypto";
 // import { useRouter } from "expo-router";
@@ -29,7 +109,8 @@
 //         nonce: hashedNonce,
 //       });
 
-//       const { identityToken } = appleResult;
+//       // 1. Extract email directly from the Apple result payload
+//       const { identityToken, email } = appleResult;
 //       if (!identityToken) throw new Error("No identity token provided.");
 
 //       const appleCredential = auth.AppleAuthProvider.credential(
@@ -41,24 +122,56 @@
 //       const user = userCredential.user;
 
 //       if (user) {
-//         await initializeUser(user.uid, user.email || "");
-//         console.log("Apple User Initialized in Database");
+//         // 2. CRASH FIX: Ensure email is strictly a string, never undefined.
+//         // Apple only returns the email on the very first login.
+//         let safeEmail = "";
+        
+//         if (email) {
+//             safeEmail = email; 
+//         } else if (user.email) {
+//             safeEmail = user.email; 
+//         }
+
+//         if (safeEmail === undefined || safeEmail === null) {
+//             safeEmail = "";
+//         }
+
+//         await initializeUser(user.uid, safeEmail);
+//         console.log("Apple User Initialized safely.");
 //       }
 //     } catch (e: any) {
-//       if (e.code === "ERR_REQUEST_CANCELED") {
-//       } else {
-//         console.error("Apple Sign-In Error:", e);
-//         Alert.alert("Login Failed", e.message);
+//       // 3. RACE CONDITION FIX: Handle unmounts cleanly
+//       if (e.code === "ERR_REQUEST_CANCELED" || e.code === "ERR_CANCELED") {
+//         return; // User manually canceled
 //       }
+      
+//       if (auth().currentUser) {
+//          // The auth listener already redirected the user. Safe to ignore background interrupt.
+//          console.log("Background task interrupted by screen navigation. Safe to ignore:", e.message);
+//          return; 
+//       }
+
+//       console.error("Apple Sign-In Error:", e);
+//       Alert.alert("Login Failed", e.message || "Could not complete Apple Sign-In.");
 //     }
 //   };
 
 //   return (
+//     // <View style={styles.container}>
+//     //   <AppleAuthentication.AppleAuthenticationButton
+//     //     buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+//     //     buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+//     //     cornerRadius={30}
+//     //     style={styles.button}
+//     //     onPress={handleAppleLogin}
+//     //   />
+//     // </View>
 //     <View style={styles.container}>
 //       <AppleAuthentication.AppleAuthenticationButton
 //         buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-//         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-//         cornerRadius={30}
+//         buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE} 
+        
+//         cornerRadius={24}
 //         style={styles.button}
 //         onPress={handleAppleLogin}
 //       />
@@ -71,17 +184,41 @@
 //     marginBottom: 12,
 //     width: "100%",
 //     alignItems: "center",
+//     justifyContent: "center",
 //   },
 //   button: {
 //     width: "100%",
-//     height: 52,
+//     minWidth: 280, // 👈 FIX: Prevents the background from collapsing on iPads
+//     maxWidth: 400, // 👈 FIX: Keeps it looking good on giant iPad screens
+//     height: 60,
 //   },
 // });
+
+// // const styles = StyleSheet.create({
+// //   container: {
+// //     marginBottom: 12,
+// //     width: "100%",
+// //     alignItems: "center",
+// //   },
+// //   button: {
+// //     width: "100%",
+// //     height: 52,
+// //   },
+// // });
+
+import { Ionicons } from "@expo/vector-icons";
 import * as AppleAuthentication from "expo-apple-authentication";
 import * as Crypto from "expo-crypto";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Alert, Platform, StyleSheet, View } from "react-native";
+import {
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { initializeUser } from "../services/database";
 import { auth } from "../services/firebase";
 
@@ -92,6 +229,7 @@ export default function AppleSignIn() {
 
   const handleAppleLogin = async () => {
     try {
+      // 1. Generate Nonce for Firebase Security
       const nonce =
         Math.random().toString(36).substring(2, 15) +
         Math.random().toString(36).substring(2, 15);
@@ -100,6 +238,7 @@ export default function AppleSignIn() {
         nonce,
       );
 
+      // 2. Trigger the Native Auth Request
       const appleResult = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -108,10 +247,10 @@ export default function AppleSignIn() {
         nonce: hashedNonce,
       });
 
-      // 1. Extract email directly from the Apple result payload
       const { identityToken, email } = appleResult;
       if (!identityToken) throw new Error("No identity token provided.");
 
+      // 3. Authenticate with Firebase
       const appleCredential = auth.AppleAuthProvider.credential(
         identityToken,
         nonce,
@@ -121,35 +260,13 @@ export default function AppleSignIn() {
       const user = userCredential.user;
 
       if (user) {
-        // 2. CRASH FIX: Ensure email is strictly a string, never undefined.
-        // Apple only returns the email on the very first login.
-        let safeEmail = "";
-        
-        if (email) {
-            safeEmail = email; 
-        } else if (user.email) {
-            safeEmail = user.email; 
-        }
-
-        if (safeEmail === undefined || safeEmail === null) {
-            safeEmail = "";
-        }
-
+        let safeEmail = email || user.email || "";
         await initializeUser(user.uid, safeEmail);
-        console.log("Apple User Initialized safely.");
+        console.log("Apple User Initialized with Custom Button.");
       }
     } catch (e: any) {
-      // 3. RACE CONDITION FIX: Handle unmounts cleanly
-      if (e.code === "ERR_REQUEST_CANCELED" || e.code === "ERR_CANCELED") {
-        return; // User manually canceled
-      }
+      if (e.code === "ERR_REQUEST_CANCELED" || e.code === "ERR_CANCELED") return;
       
-      if (auth().currentUser) {
-         // The auth listener already redirected the user. Safe to ignore background interrupt.
-         console.log("Background task interrupted by screen navigation. Safe to ignore:", e.message);
-         return; 
-      }
-
       console.error("Apple Sign-In Error:", e);
       Alert.alert("Login Failed", e.message || "Could not complete Apple Sign-In.");
     }
@@ -157,13 +274,14 @@ export default function AppleSignIn() {
 
   return (
     <View style={styles.container}>
-      <AppleAuthentication.AppleAuthenticationButton
-        buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
-        buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-        cornerRadius={30}
-        style={styles.button}
+      <TouchableOpacity 
+        style={styles.customButton} 
         onPress={handleAppleLogin}
-      />
+        activeOpacity={0.8}
+      >
+        <Ionicons name="logo-apple" size={20} color="#000" style={styles.icon} />
+        <Text style={styles.buttonText}>Continue with Apple</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -174,8 +292,29 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  button: {
+  customButton: {
+    flexDirection: "row",
+    backgroundColor: "#FFFFFF", // Solid White background for high contrast on dark theme
     width: "100%",
     height: 52,
+    borderRadius: 24, // Your requested border radius
+    alignItems: "center",
+    justifyContent: "center",
+    // Adding a slight shadow to make it clearly "elevated" as a button
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  icon: {
+    marginRight: 8,
+    marginTop: -2, // Slight adjustment to center the Apple logo visually
+  },
+  buttonText: {
+    color: "#000000",
+    fontSize: 17, // Set this to match your Google/Email buttons exactly
+    fontWeight: "600",
+    letterSpacing: -0.4,
   },
 });
