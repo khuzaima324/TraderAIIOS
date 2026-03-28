@@ -1411,7 +1411,7 @@ export default function OnboardingScreen() {
   const LogoHeader = ({ scale = 1 }: { scale?: number }) => (
     <View style={[styles.logoContainer, { transform: [{ scale }] }]}>
       <Image
-        source={require("../assets/images/new-icon.png")}
+        source={require("../assets/images/icon.png")}
         style={styles.logoImage}
         resizeMethod="contain"
       />
