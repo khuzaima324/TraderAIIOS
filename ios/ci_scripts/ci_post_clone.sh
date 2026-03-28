@@ -21,10 +21,14 @@ npm install -g yarn
 echo "Installing project dependencies..."
 yarn install
 
-# 5. Navigate back to the iOS folder
+# 5. HOTFIX for Xcode 16 / iOS 18 SDK (expo-device TARGET_OS_SIMULATOR bug)
+echo "Applying Xcode 16 patch for expo-device..."
+sed -i '' 's/TARGET_OS_SIMULATOR/targetEnvironment(simulator)/g' node_modules/expo-device/ios/UIDevice.swift
+
+# 6. Navigate back to the iOS folder
 cd ios
 
-# 6. Fix Podfile.lock mismatch and install CocoaPods
+# 7. Fix Podfile.lock mismatch and install CocoaPods
 echo "Fixing Podfile.lock mismatch and installing CocoaPods..."
 rm -f Podfile.lock
 pod install --repo-update
