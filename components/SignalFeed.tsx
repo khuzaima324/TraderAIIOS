@@ -83,31 +83,7 @@ export const SignalsFeed: React.FC<SignalsFeedProps> = ({
     }, []),
   );
 
-  // const getTimeAgo = (timestamp: number) => {
-  //   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  //   if (seconds < 60) return "Just now";
-  //   const minutes = Math.floor(seconds / 60);
-  //   if (minutes < 60) return `${minutes}m ago`;
-  //   const hours = Math.floor(minutes / 60);
-  //   if (hours < 24) return `${hours}h ago`;
-  //   return `${Math.floor(hours / 24)}d ago`;
-  // };
-
-  // const getTimeAgo = (timestamp: number) => {
-  //   // Fix: Check if timestamp is valid before doing math
-  //   if (!timestamp || isNaN(timestamp)) return "Recently";
-
-  //   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  //   if (seconds < 60) return "Just now";
-  //   const minutes = Math.floor(seconds / 60);
-  //   if (minutes < 60) return `${minutes}m ago`;
-  //   const hours = Math.floor(minutes / 60);
-  //   if (hours < 24) return `${hours}h ago`;
-  //   return `${Math.floor(hours / 24)}d ago`;
-  // };
-
 const getTimeAgo = (timestamp?: number | string | null) => {
-    // 1. Bulletproof check for missing manual scan data
     if (!timestamp) return "Just now";
 
     // 2. Force it to be a number (fixes manual scans that save time as a string)

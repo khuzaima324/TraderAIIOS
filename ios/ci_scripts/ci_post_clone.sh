@@ -1,3 +1,4 @@
+# /Users/khuzaima/Desktop/TradersiOS/ios/ci_scripts/ci_post_clone.sh
 #!/bin/sh
 
 # Fail the build if any command fails

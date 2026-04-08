@@ -79,7 +79,7 @@ export interface TrackedAccount {
   addedAt?: number;
   platform?: "twitter" | "instagram" | "youtube";
   isVerified?: boolean;
-  isCustom?: boolean; // Added helper for UI logic
+  isCustom?: boolean; 
 }
 
 export enum SubscriptionTier {
@@ -125,12 +125,11 @@ export const SUPPORTED_LANGUAGES: { code: LanguageCode; label: string }[] = [
   { code: "hi", label: "हिन्दी" },
 ];
 
-// 👇 MERGED & FIXED: No duplicate UserProfile
 export interface UserUsageStats {
   scansToday: number;
   analysesToday: number;
   trackersCount: number;
-  lastResetDate?: string; // 👈 CHANGED: Made Optional (?) to prevent errors
+  lastResetDate?: string; 
   lastScanDate?: number;
   totalLifetimeScans: number;
   totalLifetimeAnalyses: number;

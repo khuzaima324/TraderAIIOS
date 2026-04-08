@@ -1,0 +1,78 @@
+{
+  "project_info": {
+    "project_number": "1036296914296",
+    "project_id": "traders-ai-b0ac3",
+    "storage_bucket": "traders-ai-b0ac3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1036296914296:android:c2655c6b21d9c0b449348d",
+        "android_client_info": {
+          "package_name": "com.tradersai.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1036296914296-53o856aqla4im9q0pd6g8rntt6ema29m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradersai.app",
+            "certificate_hash": "b3c712c0b2dae5f32237ef92e120562868d7ce97"
+          }
+        },
+        {
+          "client_id": "1036296914296-6ud5td0p9gqbdbcq1gdv28bgk42p80co.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradersai.app",
+            "certificate_hash": "134c69d869c889a18760b4b29a4a165c7a5e4b04"
+          }
+        },
+        {
+          "client_id": "1036296914296-baelk4h5p4qpnotutp73o27e4u52r9vl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradersai.app",
+            "certificate_hash": "b42d2ff7e6f7fdeaf0994b74780d918191b971d9"
+          }
+        },
+        {
+          "client_id": "1036296914296-p36s8iceal04mpq3i2sa5mtbb6g3j57h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradersai.app",
+            "certificate_hash": "44d858a9c8b05cceef9b8e54cc7442bfb9627edc"
+          }
+        },
+        {
+          "client_id": "1036296914296-ro11i6c8r45otstjc69plv2rc81cad7a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHjH-6YrT-K7P6s6QcSSXBDrVBo8iaGvg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1036296914296-ro11i6c8r45otstjc69plv2rc81cad7a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1036296914296-upd6tj8287ue3scef2v9hp7enkptqlva.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tradersai.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

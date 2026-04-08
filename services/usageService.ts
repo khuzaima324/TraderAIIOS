@@ -3,7 +3,6 @@ import { Alert } from "react-native";
 import { PLAN_LIMITS } from "../config/plans";
 import { SubscriptionTier, UserProfile } from "../types";
 
-// Helper: Returns true if the timestamp is from today
 const isSameDay = (timestamp?: number) => {
   if (!timestamp) return false;
   const date = new Date(timestamp);
@@ -48,7 +47,6 @@ export const checkUsageLimit = (
         : user.usage.totalLifetimeAnalyses;
   }
 
-  // 3. PAID USER LIMITS (Daily)
   // This logic runs for Plus/Pro users
   else {
     limit = plan[feature];
@@ -100,12 +98,11 @@ export const incrementUsage = async (
   const isPaidTier =
     userTier === SubscriptionTier.PRO || userTier === SubscriptionTier.PLUS;
 
-  // Unlimited chart analysis for paid users? Don't increment.
+
   if (feature === "chartAnalysis" && isPaidTier) return;
 
   const userRef = firestore().collection("users").doc(userId);
 
-  // Get current data to check the date
   const userSnap = await userRef.get();
   const userData = userSnap.data();
   const lastDate = userData?.usage?.lastScanDate || 0;

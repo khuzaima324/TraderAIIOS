@@ -4,18 +4,9 @@ import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
 import { saveDeviceToken } from "./database";
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     shouldShowBanner: true,
-//     shouldShowList: true,
-//     shouldPlaySound: true,
-//     shouldSetBadge: false,
-//   }),
-// });
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true, // ✅ Replaces shouldShowBanner & shouldShowList
+    shouldShowAlert: true, 
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),

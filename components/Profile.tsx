@@ -156,23 +156,11 @@ export const Profile: React.FC<ProfileProps> = ({
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [activeProductId, setActiveProductId] = useState<string | null>(null);
 
-  // const isGoogleUser = auth().currentUser?.providerData.some(
-  //   (provider: any) => provider.providerId === "google.com",
-  // );
-
-  // Check if user is signed in via ANY social provider (Google or Apple)
-  // const isSocialUser = auth().currentUser?.providerData.some(
-  //   (provider: any) =>
-  //     provider.providerId === "google.com" ||
-  //     provider.providerId === "apple.com",
-  // );
-
-  // Get the list of providers (e.g., password, google.com, apple.com)
   const providers = auth().currentUser?.providerData || [];
 
   const isGoogle = providers.some((p) => p.providerId === "google.com");
   const isApple = providers.some((p) => p.providerId === "apple.com");
-  const isSocialUser = isGoogle || isApple; // Use this to hide the Password/Email section
+  const isSocialUser = isGoogle || isApple; 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -297,7 +285,6 @@ export const Profile: React.FC<ProfileProps> = ({
     try {
       const user = auth().currentUser;
       if (user) {
-        // Here you would also add logic to delete user data from Firestore if you have any
         await user.delete(); 
         
         setShowDeleteModal(false);
@@ -307,7 +294,7 @@ export const Profile: React.FC<ProfileProps> = ({
           "Account Deleted", 
           "Your account and data have been scheduled for deletion within 14 days. If you wish to cancel this, please log back in within 14 days."
         );
-        onLogout(); // Log the user out immediately
+        onLogout(); 
       }
     } catch (e: any) {
       if (e.code === 'auth/requires-recent-login') {
